@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Simulador liviano de journalctl para entornos Docker sin systemd/journald.
+LOG=/var/log/syslog.1
+if [[ " ${*:-} " == *" -f "* ]]; then
+  tail -f "$LOG"
+elif [[ " ${*:-} " == *" -u nginx.service "* ]]; then
+  grep -iE 'nginx|web|http|app' "$LOG" || true
+elif [[ " ${*:-} " == *" -k "* ]]; then
+  grep -i kernel "$LOG" || true
+else
+  cat "$LOG"
+fi

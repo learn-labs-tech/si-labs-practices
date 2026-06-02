@@ -1,0 +1,39 @@
+name: devsecops-learning-labs
+
+services:
+  workstation:
+    build:
+      context: ./workstation
+    container_name: lab-workstation
+    hostname: secOps
+    privileged: true
+    tty: true
+    stdin_open: true
+    working_dir: /home/analyst
+    command: /usr/local/bin/start-lab.sh
+    ports:
+      - "8081:8081"
+    volumes:
+      - analyst-home:/home/analyst
+      - second-drive:/mnt/docker_second_drive
+      - ./labs:/labs:ro
+
+  web-server:
+    image: nginx:1.25-alpine
+    container_name: lab-web-server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html:ro
+
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: lab-juice-shop
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=unsafe
+
+volumes:
+  analyst-home:
+  second-drive:
